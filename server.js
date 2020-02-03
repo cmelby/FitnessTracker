@@ -40,6 +40,15 @@ db.Workout.create({ name: "Deadlift" })
           res.json(err);
         });
     });
+  app.get("/api/workouts/:id", (req, res) => {
+      db.Workout.findOne({})
+        .then(dbWorkout => {
+          res.json(dbWorkout);
+        })
+        .catch(err => {
+          res.json(err);
+        });
+    });
   app.get("/api/workouts", (req, res) => {
       db.Workout.find({})
         .then(dbWorkout => {
