@@ -9,13 +9,13 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const db = require("./models");
 
-// Set up middleware....
+//Set up middleware....
 app.use(logger("dev"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
 
-// require routes ......
+//Require routes ......
 require("./routes/html")(app, path);
 
 app.use(express.static("public"));
@@ -42,22 +42,12 @@ app.get("/api/workouts", (req, res) => {
         res.json(err);
       });
   });
-
 // Workout PUT.....................
 app.put("/api/workouts/:id", (req, res) => {
   console.log(req.body);
   db.Exercise.create(req.body)
       .then((data) => db.Workout.findOneAndUpdate(
-          {_id: req.params.id},
-          { 
-              $push: {
-                  exercises: data._id 
-              }, 
-              $inc: {
-                  totalDuration: data.duration
-              } 
-          },
-          { new: true })
+          {_id: req.params.id}, { $push: { exercises: data._id }, $inc: { totalDuration: data.duration } }, { new: true })
       )
       .then(dbWorkout => {
       res.json(dbWorkout);
@@ -65,7 +55,6 @@ app.put("/api/workouts/:id", (req, res) => {
           res.json(err);
       });
 });
-
 // Workout POST route.................
 app.post("/api/workouts", (req, res) => {
   db.Workout.create({day: Date.now()})
@@ -78,7 +67,7 @@ app.post("/api/workouts", (req, res) => {
 });
 // Workout Range Get ......................
 app.get("/api/workouts/range", (req, res) => {
-      db.Workout.find({req})
+      db.Workout.find({})
       .populate("exercises")
       .then(dbWorkout => {
         res.json(dbWorkout);
