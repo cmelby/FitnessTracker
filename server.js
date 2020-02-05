@@ -25,16 +25,16 @@ mongoose.connect(process.env.MONGDB_URI || "mongodb://localhost/workout", { useN
 
 db.Workout.create({ name: "Deadlift" })
   .then(dbWorkout => {
-    console.log(dbWorkout);
+    // console.log(dbWorkout);
   })
   .catch(({ message }) => {
-    console.log(message);
+    // console.log(message);
   });
 
-// Workout Gets............
+// Workout GET................
 app.get("/api/workouts", (req, res) => {
-  console.log(res)
     db.Workout.find({})
+      .populate("exercises")
       .then(dbWorkout => {
         res.json(dbWorkout);
       })
@@ -42,63 +42,33 @@ app.get("/api/workouts", (req, res) => {
         res.json(err);
       });
   });
-app.get("/api/workouts/:id", (req, res) => {
-  console.log(res)
-    db.Workout.findOne({_id: req.params.id})
-      .then(dbWorkout => {
-        res.json(dbWorkout);
-      })
-      .catch(err => {
-        res.json(err);
-      });
-  });
-  app.get("/api/workouts/range", (req, res) => {
-    console.log(res)
-      db.Workout.find({})
-        .then(dbWorkout => {
-          res.json(dbWorkout);
-        })
-        .catch(err => {
-          res.json(err);
-        });
-    });
-//   // Workout Puts..........
-  app.put("/api/workouts/:id", ({body}, res) => {
-    console.log(res)
-      db.Workout.updateOne({}, {$set: {body} })
-        .then(dbWorkout => {
-          res.json(dbWorkout);
-        })
-        .catch(err => {
-          res.json(err);
-        });
-    });
-//     app.get("/api/exercise", (req, res) => {
-//       console.log(res)
-//       db.Workout.find({})
-//       .populate("exercises")
-//         .then(dbWorkout => {
-//           res.json(dbWorkout);
-//         })
-//         .catch(err => {
-//           res.json(err);
-//         });
-//     });
-//     app.get("/api/exercise?/:id", (req, res) => {
-//       console.log(res)
-//       db.Workout.findOne({_id: req.params.id})
-//         .then(dbWorkout => {
-//           res.json(dbWorkout);
-//         })
-//         .catch(err => {
-//           res.json(err);
-//         });
-//     });
 
-app.post("/api/workouts", ({body}, res) => {
-  console.log(res)
-  db.Excercise.create(body)
-    .then(({_id}) => db.Workout.findOneAndUpdate({}, { $push: { exercises: _id } }, { new: true }))
+// Workout PUT.....................
+app.put("/api/workouts/:id", (req, res) => {
+  console.log(req.body);
+  db.Exercise.create(req.body)
+      .then((data) => db.Workout.findOneAndUpdate(
+          {_id: req.params.id},
+          { 
+              $push: {
+                  exercises: data._id 
+              }, 
+              $inc: {
+                  totalDuration: data.duration
+              } 
+          },
+          { new: true })
+      )
+      .then(dbWorkout => {
+      res.json(dbWorkout);
+      }).catch(err => {
+          res.json(err);
+      });
+});
+
+// Workout POST route.................
+app.post("/api/workouts", (req, res) => {
+  db.Workout.create({day: Date.now()})
     .then(dbWorkout => {
       res.json(dbWorkout);
     })
@@ -106,7 +76,19 @@ app.post("/api/workouts", ({body}, res) => {
       res.json(err);
     });
 });
-
-app.listen(PORT, () => {
-    console.log(`App running on port ${PORT}!`);
+// Workout Range Get ......................
+app.get("/api/workouts/range", (req, res) => {
+      db.Workout.find({req})
+      .populate("exercises")
+      .then(dbWorkout => {
+        res.json(dbWorkout);
+      })
+      .catch(err => {
+        res.json(err);
+      });
   });
+  
+app.listen(PORT, () => {
+  console.log(`App running on port ${PORT}!`);
+});
+    

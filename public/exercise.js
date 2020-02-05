@@ -25,6 +25,7 @@ async function initExercise() {
     console.log(workout)
   }
   if (workout) {
+    console.log(workout);
     location.search = "?id=" + workout._id;
   }
 
@@ -101,11 +102,13 @@ async function handleFormSubmit(event) {
   let workoutData = {};
 
   if (workoutType === "cardio") {
+    console.log("****equals cardio****")
     workoutData.type = "cardio";
     workoutData.name = cardioNameInput.value.trim();
     workoutData.distance = Number(distanceInput.value.trim());
     workoutData.duration = Number(durationInput.value.trim());
   } else if (workoutType === "resistance") {
+    console.log("**** Resistence ****")
     workoutData.type = "resistance";
     workoutData.name = nameInput.value.trim();
     workoutData.weight = Number(weightInput.value.trim());
