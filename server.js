@@ -47,7 +47,16 @@ app.put("/api/workouts/:id", (req, res) => {
   console.log(req.body);
   db.Exercise.create(req.body)
       .then((data) => db.Workout.findOneAndUpdate(
-          {_id: req.params.id}, { $push: { exercises: data._id }, $inc: { totalDuration: data.duration } }, { new: true })
+          {_id: req.params.id},
+          { 
+              $push: {
+                  exercises: data._id 
+              }, 
+              $inc: {
+                  totalDuration: data.duration
+              } 
+          },
+          { new: true })
       )
       .then(dbWorkout => {
       res.json(dbWorkout);
