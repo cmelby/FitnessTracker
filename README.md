@@ -52,7 +52,7 @@ app.put("/api/workouts/:id", (req, res) => {
 * [Morgan](https://www.npmjs.com/package/morgan)
 * [Express.js](https://expressjs.com/)
 * [Node.js](https://nodejs.org/en/)
-* [npmjs](https://docs.npmjs.com/)
+* [npm.js](https://docs.npmjs.com/)
 * [inquirer](https://www.npmjs.com/package/inquirer)
 
 ## Authors
